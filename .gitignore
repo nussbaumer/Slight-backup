@@ -9,3 +9,4 @@ keystore
 *.tar*
 *~
 .settings
+.*.swp

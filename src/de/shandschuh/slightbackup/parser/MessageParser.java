@@ -38,6 +38,8 @@ import de.shandschuh.slightbackup.BackupActivity;
 import de.shandschuh.slightbackup.R;
 import de.shandschuh.slightbackup.Strings;
 
+import android.util.Log;
+
 public class MessageParser extends SimpleParser {
 	public static final String NAME = Strings.MESSAGES;
 	
@@ -62,6 +64,7 @@ public class MessageParser extends SimpleParser {
 	
 	public MessageParser(Context context, ImportTask importTask) {
 		super(context, Strings.TAG_MESSAGE, determineFields(context), BackupActivity.SMS_URI, importTask, Strings.SMS_FIELDS);
+		Log.d(Strings.TAG_LOG, "MessageParser() construct finished\n");
 	}
 	
 	@Override
@@ -88,23 +91,32 @@ public class MessageParser extends SimpleParser {
 	
 	private static String[] determineFields(Context context) {
 		Cursor cursor = context.getContentResolver().query(SMSCONVERSATIONSUPDATE_URI, null, null, null, BaseColumns._ID+" DESC LIMIT 0");
+		Log.d(Strings.TAG_LOG, "MessageParser::determineFields()\n");
+		Log.d(Strings.TAG_LOG, "querystring"+SMSCONVERSATIONSUPDATE_URI+" "+BaseColumns._ID+" DESC LIMIT 0\n");
 		
 		String[] availableFields = cursor.getColumnNames();
 		
 		cursor.close();
 		
 		Vector<String> fields = new Vector<String>();
+
+		for (String field0: availableFields) {
+			Log.d(Strings.TAG_LOG, "available-field: "+field0);
+		}
+
 		
 		for (String field : Strings.SMS_FIELDS) {
 			if (Strings.indexOf(availableFields, field) == -1) {
 				throw new IllegalArgumentException();
 			} else {
 				fields.add(field);
+				Log.d(Strings.TAG_LOG, "field: "+field);
 			}
 		}
 		for (String field : Strings.SMS_FIELDS_OPTIONAL) {
 			if (Strings.indexOf(availableFields, field) > -1) {
 				fields.add(field);
+				Log.d(Strings.TAG_LOG, "field-optional: "+field);
 			}
 		}
 		

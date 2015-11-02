@@ -37,6 +37,8 @@ import android.net.Uri;
 import de.shandschuh.slightbackup.BackupTask;
 import de.shandschuh.slightbackup.Strings;
 
+import android.util.Log;
+
 public abstract class SimpleParser extends Parser {
 	protected String[] values;
 	
@@ -74,6 +76,7 @@ public abstract class SimpleParser extends Parser {
 		this.contentUri = contentUri;
 		this.importTask = importTask;
 		this.existenceFields = existanceFields;
+		Log.d("slightbackup", "SimpleParser() construct begins\n");
 		if (existanceFields != null) {
 			existanceLength = existanceFields.length;
 			
@@ -146,6 +149,7 @@ public abstract class SimpleParser extends Parser {
 	
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
+		Log.d(Strings.TAG_LOG, "endElement(\""+uri+"\", \""+localName+"\", \""+qName+"\")\n");
 		if (!canceled && tagEntered && tag.equals(localName)) {
 			tagEntered = false;
 			
@@ -157,15 +161,18 @@ public abstract class SimpleParser extends Parser {
 			
 			for (int n = 0; n < length; n++) {
 				availableValues[n] = values[availableIndices.get(n)];
+				Log.v(Strings.TAG_LOG, "availableValues["+n+"] = "+values[availableIndices.get(n)]+"\n");
 			}
 			
 			if (ignoreValues != null) {
 				for (int n = 0, i = ignoreValues.length / 2; n < i; n++) {
 					for (int k = 0; k < length; k++) {
 						if (fields[availableIndices.get(k)].equalsIgnoreCase(ignoreValues[n*2]) && availableValues[k].equalsIgnoreCase(ignoreValues[n*2+1])) {
+							Log.v("slightbackup", "skip\n");
 							addSkippedEntry();
 							return;
 						}
+						Log.v(Strings.TAG_LOG, "not-skip\n");
 					}
 				}
 			}
@@ -179,9 +186,11 @@ public abstract class SimpleParser extends Parser {
 					if (values[existancePositions[n]] == null) {
 						// this means that not all required fields are non-null
 						addSkippedEntry();
+						Log.v(Strings.TAG_LOG, "skip-2\n");
 						return;
 					} else {
 						existenceValues[n] = values[existancePositions[n]];
+						Log.v(Strings.TAG_LOG, "no-skip-2: "+existenceValues[n]+"\n");
 					}
 				}
 				cursor = context.getContentResolver().query(contentUri, null, generateWhereQuery(existenceFields), existenceValues, null);
@@ -195,11 +204,14 @@ public abstract class SimpleParser extends Parser {
 			addExtraContentValues(contentValues);
 			
 			if (!cursor.moveToFirst()) {
+				Log.v(Strings.TAG_LOG, "insert-3\n");
 				insert(contentValues);
 			} else if (updateOnExist) {
 				/** Update the existing values */
+				Log.v(Strings.TAG_LOG, "update-3\n");
 				update(contentValues, existenceValues);
 			} else {
+				Log.v(Strings.TAG_LOG, "skip-3\n");
 				addSkippedEntry();
 			}
 			cursor.close();
@@ -208,7 +220,11 @@ public abstract class SimpleParser extends Parser {
 	}
 	
 	public void insert(ContentValues contentValues) {
-		context.getContentResolver().insert(contentUri, contentValues);
+		// orig-uri: contentUri
+		Uri new_insert_uri = Uri.parse("content://sms/inbox");
+		Uri ret_uri = context.getContentResolver().insert(new_insert_uri, contentValues);
+		Log.v(Strings.TAG_LOG, "insert(\"" + new_insert_uri + "\", <" + contentValues + ">)\n");
+		Log.v(Strings.TAG_LOG, "insert() = " + ret_uri + "\n");
 	}
 	
 	public void update(ContentValues contentValues, String[] existenceValues) {

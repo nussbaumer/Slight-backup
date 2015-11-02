@@ -106,6 +106,8 @@ public final class Strings {
 	public static final String CONTACTS = "contacts";
 	
 	public static final String TAG_CONTACT = "contact";
+
+	public static final String TAG_LOG = "slightbackup";
 	
 	public static final String[] SMS_FIELDS = new String[] {
 		"date",
