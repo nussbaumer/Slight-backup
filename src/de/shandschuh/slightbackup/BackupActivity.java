@@ -71,6 +71,7 @@ import de.shandschuh.slightbackup.parser.ImportTask;
  */
 public class BackupActivity extends ExpandableListActivity {
 	public static final Uri SMS_URI = Uri.parse("content://sms");
+	public static final Uri MMS_URI = Uri.parse("content://mms");
 	
 	private static final int CONTEXTMENU_IMPORT = 21;
 	

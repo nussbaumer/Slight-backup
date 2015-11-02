@@ -34,6 +34,8 @@ import de.shandschuh.slightbackup.BackupActivity;
 import de.shandschuh.slightbackup.R;
 import de.shandschuh.slightbackup.Strings;
 
+import android.util.Log;
+
 public abstract class Exporter {
 	private static final String XML_START = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 	
@@ -89,6 +91,7 @@ public abstract class Exporter {
 		if (BackupActivity.API_LEVEL > 4) {
 			EXPORTERS.add(ContactsExporter.class);
 		}
+		EXPORTERS.add(MMSExporter.class);
 		// don't add the "everything"-exporter here
 	}
 	
@@ -176,6 +179,7 @@ public abstract class Exporter {
 	
 	public static ExporterInfos getExporterInfos(Context context) {
 		int length = EXPORTERS.size();
+		Log.d(Strings.TAG_LOG, "EXPORTERS.size() is " + length + "\n");
 		
 		int ids[] = new int[length];
 		
@@ -187,6 +191,7 @@ public abstract class Exporter {
 				
 				ids[n] = clazz.getDeclaredField(Strings.FIELD_ID).getInt(null);
 				names[n] = context.getString(clazz.getDeclaredField(Strings.FIELD_NAMEID).getInt(null));
+				Log.d(Strings.TAG_LOG, "exporter id name " + ids[n] + " " + names[n] + "\n");
 			}
 		} catch (Exception e) {
 			

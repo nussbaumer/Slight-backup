@@ -44,6 +44,8 @@ public final class Strings {
 	public static final String CALLLOGS = "calllogs";
 	
 	public static final String MESSAGES = "messages";
+
+	public static final String MMS_MESSAGES = "mms";
 	
 	public static final String PLAYLISTS = "playlists";
 	

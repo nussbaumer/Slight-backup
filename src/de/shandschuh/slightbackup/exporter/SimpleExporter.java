@@ -41,6 +41,8 @@ import de.shandschuh.slightbackup.BackupTask;
 import de.shandschuh.slightbackup.R;
 import de.shandschuh.slightbackup.Strings;
 
+import android.util.Log;
+
 public abstract class SimpleExporter extends Exporter {
 	protected static final String EQUALS = "=\"";
 	
@@ -93,9 +95,20 @@ public abstract class SimpleExporter extends Exporter {
 	public final int export(String filename) throws Exception {
 		this.filename = filename;
 		
+		Log.d(Strings.TAG_LOG, "SimpleExporter::export to "+ filename + " " +  contentUri + " " + selection + " " + sortOrder + "\n");
+
 		Cursor cursor = context.getContentResolver().query(contentUri, null, selection, null, sortOrder);
 		
+		if (cursor == null ) {
+			Log.d(Strings.TAG_LOG, "cursor is null!!!\n");
+		} else {
+			Log.d(Strings.TAG_LOG, "cursor.getCount() " + cursor.getCount() + "\n");
+		}
+		
+
 		if (checkFields && fields != null) {
+
+
 			if (cursor == null || !checkFieldNames(cursor.getColumnNames(), fields)) {
 				throw new Exception(context.getString(R.string.error_unsupporteddatabasestructure));
 			}
