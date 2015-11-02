@@ -222,8 +222,8 @@ public abstract class SimpleParser extends Parser {
 	public void insert(ContentValues contentValues) {
 		// orig-uri: contentUri
 		Uri new_insert_uri = Uri.parse("content://sms/inbox");
-		Uri ret_uri = context.getContentResolver().insert(new_insert_uri, contentValues);
-		Log.v(Strings.TAG_LOG, "insert(\"" + new_insert_uri + "\", <" + contentValues + ">)\n");
+		Uri ret_uri = context.getContentResolver().insert(contentUri, contentValues);
+		Log.v(Strings.TAG_LOG, "insert(\"" + contentUri + "\", <" + contentValues + ">)\n");
 		Log.v(Strings.TAG_LOG, "insert() = " + ret_uri + "\n");
 	}
 	
